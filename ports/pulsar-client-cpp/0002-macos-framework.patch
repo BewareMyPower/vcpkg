@@ -1,0 +1,16 @@
+diff --git a/lib/CMakeLists.txt b/lib/CMakeLists.txt
+index d898e48..d234c0e 100644
+--- a/lib/CMakeLists.txt
++++ b/lib/CMakeLists.txt
+@@ -79,6 +79,11 @@ if (BUILD_DYNAMIC_LIB)
+         target_include_directories(pulsarShared PRIVATE ${dlfcn-win32_INCLUDE_DIRS})
+         target_link_options(pulsarShared PRIVATE $<$<CONFIG:DEBUG>:/NODEFAULTLIB:MSVCRT>)
+     endif()
++    if (APPLE)
++        target_link_libraries(pulsarShared stdc++ "-framework Security"
++            "-framework CoreFoundation"
++            "-framework SystemConfiguration")
++    endif ()
+ endif()
+
+ include(CheckCXXSymbolExists)

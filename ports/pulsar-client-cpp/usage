@@ -1,0 +1,5 @@
+pulsar-client-cpp provides CMake targets:
+
+  # this is heuristically generated, and may not be correct
+  find_package(pulsar CONFIG REQUIRED)
+  target_link_libraries(main PRIVATE pulsar::pulsar)

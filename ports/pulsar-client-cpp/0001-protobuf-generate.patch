@@ -1,0 +1,27 @@
+diff --git a/lib/CMakeLists.txt b/lib/CMakeLists.txt
+index 8bd9749..d898e48 100644
+--- a/lib/CMakeLists.txt
++++ b/lib/CMakeLists.txt
+@@ -27,6 +27,14 @@ set(LIB_AUTOGEN_DIR ${AUTOGEN_DIR}/lib)
+ file(MAKE_DIRECTORY ${LIB_AUTOGEN_DIR})
+ include_directories(${LIB_AUTOGEN_DIR})
+
++add_library(proto-objects OBJECT "${CMAKE_SOURCE_DIR}/proto/PulsarApi.proto")
++target_link_libraries(proto-objects PUBLIC protobuf::libprotobuf)
++target_include_directories(proto-objects PUBLIC "$<BUILD_INTERFACE:${LIB_AUTOGEN_DIR}>")
++protobuf_generate(
++    TARGET proto-objects
++    IMPORT_DIRS "${CMAKE_SOURCE_DIR}/proto"
++    PROTOC_OUT_DIR "${LIB_AUTOGEN_DIR}")
++
+ # Protobuf generation is only supported natively starting from CMake 3.8
+ # Using custom command for now
+ set(PROTO_SOURCES ${LIB_AUTOGEN_DIR}/PulsarApi.pb.cc ${LIB_AUTOGEN_DIR}/PulsarApi.pb.h)
+@@ -59,6 +67,7 @@ set(LIB_NAME_SHARED ${LIB_NAME})
+
+ # this is the "object library" target: compiles the sources only once
+ add_library(PULSAR_OBJECT_LIB OBJECT ${PULSAR_SOURCES})
++target_link_libraries(PULSAR_OBJECT_LIB PUBLIC proto-objects)
+ set_property(TARGET PULSAR_OBJECT_LIB PROPERTY POSITION_INDEPENDENT_CODE 1)
+
+ if (BUILD_DYNAMIC_LIB)
