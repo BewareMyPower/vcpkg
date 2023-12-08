@@ -25,7 +25,13 @@
     "boost-random",
     "boost-serialization",
     "boost-xpressive",
-    "curl",
+    {
+      "name": "curl",
+      "default-features": false,
+      "features": [
+        "openssl"
+      ]
+    },
     "openssl",
     "protobuf",
     "snappy",
