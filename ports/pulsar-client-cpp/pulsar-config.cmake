@@ -61,6 +61,7 @@ if (NOT TARGET pulsar::pulsar)
         target_link_libraries(pulsar::pulsar INTERFACE
             "-framework Security"
             "-framework CoreFoundation"
+            "-framework CoreServices"
             "-framework SystemConfiguration")
     endif ()
     set(CMAKE_FIND_LIBRARY_SUFFIXES ${_cmake_find_library_suffixes})
