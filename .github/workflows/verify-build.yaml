@@ -63,8 +63,10 @@ jobs:
         config:
           - { os: 'ubuntu-22.04', triplet: 'x64-linux' }
           - { os: 'ubuntu-22.04', triplet: 'x64-linux-dynamic' }
+          - { os: 'ubuntu-22.04', triplet: 'x64-linux-release' }
           - { os: 'macos-12', triplet: 'x64-osx' }
           - { os: 'macos-12', triplet: 'x64-osx-dynamic' }
+          - { os: 'macos-12', triplet: 'x64-osx-release' }
 
     steps:
       - name: checkout
@@ -78,8 +80,11 @@ jobs:
           cmake -B build -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }}
           cmake --build build
           ./build/main
-      - name: Test finding debug library
+
+      - name: Build debug library
+        if: ${{ ! endsWith(matrix.config.triplet, 'release') }}
         run: |
           cd example/
-          cmake -B build-debug -DCMAKE_BUILD_TYPE=Debug
-          cmake -B build-release -DCMAKE_BUILD_TYPE=Release
+          cmake -B build -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} -DCMAKE_BUILD_TYPE=Debug
+          cmake --build build
+          ./build/main

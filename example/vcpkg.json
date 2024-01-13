@@ -1,7 +1,7 @@
 {
   "name": "vcpkg-pulsar-demo",
   "version-string": "0.1.0",
-  "builtin-baseline": "4e110041b283c6f22223b8fa108630164a67652c",
+  "builtin-baseline": "4b68e4d6be39cfbe0363bde80e1d6f814956dd99",
   "dependencies": [
     {
       "name": "curl",
