@@ -1,0 +1,69 @@
+name: Verify pulsar-client-cpp
+on:
+  pull_request:
+    branches:
+      - master
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows-build:
+    timeout-minutes: 120
+    name: Build on Windows ${{ matrix.triplet }}
+    runs-on: windows-2019
+    strategy:
+      fail-fast: false
+      matrix:
+        triplet: [x64-windows, x64-windows-static]
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build
+        run: |
+          cd example/
+          cmake -B build -DVCPKG_TARGET_TRIPLET=${{ matrix.triplet }}
+          cmake --build build
+          ./build/Debug/main.exe
+          cmake --build build --config Release
+          ./build/Release/main.exe
+  non-windows-build:
+    timeout-minutes: 120
+    name: Build on ${{ matrix.config.os }} ${{ matrix.config.triplet }}
+    runs-on: ${{ matrix.config.os }}
+    needs: windows-build
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - { os: 'ubuntu-22.04', triplet: 'x64-linux' }
+          - { os: 'ubuntu-22.04', triplet: 'x64-linux-dynamic' }
+          - { os: 'ubuntu-22.04', triplet: 'x64-linux-release' }
+          - { os: 'macos-12', triplet: 'x64-osx' }
+          - { os: 'macos-12', triplet: 'x64-osx-dynamic' }
+          - { os: 'macos-12', triplet: 'x64-osx-release' }
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build
+        run: |
+          cd example/
+          cmake -B build -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }}
+          cmake --build build
+          ./build/main
+      - name: Build debug library
+        if: ${{ ! endsWith(matrix.config.triplet, 'release') }}
+        run: |
+          cd example/
+          cmake -B build -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} -DCMAKE_BUILD_TYPE=Debug
+          cmake --build build
+          ./build/main
