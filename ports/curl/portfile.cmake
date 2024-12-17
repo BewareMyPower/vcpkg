@@ -64,6 +64,10 @@ if(VCPKG_TARGET_IS_WINDOWS)
     list(APPEND OPTIONS -DENABLE_UNICODE=ON)
 endif()
 
+if(VCPKG_TARGET_IS_OSX)
+    list(APPEND OPTIONS -DENABLE_IPV6=OFF)
+endif()
+
 vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
     OPTIONS 
